@@ -2,6 +2,9 @@ import random
 class bot1:
     def __init__(self):
         pass
+       
+    def anylize(self, cords):
+        return {"left": cords[1], "right": 9 - (cords[1]), "up": cords[0], "down": 9 - (cords[0])}
 
     def addShips(self, ships):
         dictships = []
@@ -14,7 +17,7 @@ class bot1:
 
     def getShip(self, ship, shipName):
         cords = [random.randint(0, 9), random.randint(0, 9)]
-        info = anylize(cords)
+        info = self.anylize(cords)
         directions = []
         for direc in info:
             if ship["size"] <= info[direc]:
@@ -32,44 +35,88 @@ class bot1:
                     return False
         return coordinates
 
-
-
-        return dictships
-
     def makeMove(self, misses, hits, sinks):
         if hits != []:
-            return pursueHit(misses, hits, sinks)
+            if len(hits) == 1:
+                return self.pursueHit(misses, hits, sinks)
+
+            if len(hits) > 1:
+                return self.pursueHits(misses, hits, sinks)
+        else:
+            return self.guess(misses, hits, sinks)
 
     def pursueHit(self, misses, hits, sinks):
         direckey = {"right": [0, 1], "left": [0, -1], "down": [1, 0], "up": [-1, 0]}
-        if len(hits) == 1:
-            possibleDirections = ["right", "left", "down", "up"]
-            info = anylize(hits[0])
-            for infokey in info.keys():
-                if info[infokey] == 0:
-                    possibleDirections.remove(infokey)
+        while True:
+            directions = ["right", "left", "down", "up"]
+            coordinate = hits[0]
+            info = self.anylize(coordinate)
+            for item in info.keys():
+                if info[item] == 0:
+                    directions.remove(item)
+            works = []
+            for direction in directions:
+                coordinates = [coordinate[0] + direckey[direction][0], coordinate[1] + direckey[direction][1]]
+                if coordinates in misses or coordinates in sinks:
+                    directions.remove(direction)
                     continue
-                if [hits[0][0] + direckey[infokey][0], hits[0][1] + direckey[infokey][1]] in misses or [hits[0][0] + direckey[infokey][0], hits[0][1] + direckey[infokey][1]] in sinks:
-                    possibleDirections.remove(infokey)
-            direction = random.choice(possibleDirections)
-            return [hits[0][0] + direckey[direction][0], hits[0][1] + direckey[direction][1]]
-        else:
-            if hits[len(hits) - 1][0] == hits[0][0]:
-                info1 = anylize(hits[len(hits) - 1])
-                info2 = anylize(hits[0])
-                if info1["right"] <= info2["right"]:
-                    rightinfo = info1
-                    leftinfo = info2
-                else:
-                    rightinfo = info2
-                    leftinfo = info1
+                works.append(direction)
+            direction = random.choice(works)
+            return [coordinate[0] + direckey[direction][0], coordinate[1] + direckey[direction][1]]
 
-                possibleDirections = ["left", "right"]
-                if rightinfo["right"] == 0:
-                    possibleDirections.remove("right")
+    def pursueHits(self, misses, hits, sinks):
+        direckey = {"right": [0, 1], "left": [0, -1], "down": [1, 0], "up": [-1, 0]}
+        if hits[0][0] == hits[1][0]:
+            mini = 10000
+            maxi = 0
+            for hit in hits:
+                if hit[1] < mini[1]:
+                    mini = hit
+                if hit[1] > maxi[1]:
+                    maxi = hit
+            rightDistance = 9 - maxi[1]
+            leftDistance = mini[1]
+            if rightDistance == 0:
+                direction = "left"
+            elif leftDistance == 0:
+                direction = "right"
+            else:
+                direction = random.choice(["right", "left"])
+            if direction == "right":
+                return [maxi[0], maxi[1] + 1]
+            else:
+                return [maxi[0], maxi[1] - 1]
+        if hits[1][1] == hits[0][1]:
+            mini = [9, 0]
+            maxi = [0, 0]
+            for hit in hits:
+                if hit[0] < mini[0]:
+                    mini = hit
+                if hit[0] > maxi[0]:
+                    maxi = hit
+            rightDistance = 9 - maxi[0]
+            leftDistance = mini[0]
+            if rightDistance == 0:
+                direction = "left"
+            elif leftDistance == 0:
+                direction = "right"
+            else:
+                direction = random.choice(["right", "left"])
+            if direction == "right":
+                return [maxi[0] + 1, maxi[1]]
+            else:
+                return [maxi[0] - 1, maxi[1]]
 
+    def guess(self, misses, hits, sinks):
+        while True:
+            coordinate = [random.randint(1, 9), random.randint(1, 9)]
+            if coordinate in misses or coordinate in sinks:
+                continue
 
+            if coordinate[1] % 2 == coordinate[0] % 2:
+                return coordinate
+            else:
+                continue
 
-
-    def anylize(self, cords):
-        return {"right": cords[1], "left": 10 - (cords[1]), "down": cords[0], "up": 10 - (cords[0])}
+cbot = bot1()
+print(cbot.makeMove([[1, 1]], [[1, 2]], []))
