@@ -1,6 +1,6 @@
 import sys
 import random
-import bot1
+import botc
 # import bot2
 import bots
 
@@ -152,7 +152,7 @@ def initPlayers():
     return [
         {
             'name': 'caden',
-            'bot': bot1.bot1(),
+            'bot': botc.bot1(),
             'sunkShips': 0,
             'ships': [
                 {
