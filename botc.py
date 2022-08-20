@@ -149,7 +149,7 @@ class bot1:
 
                 if direction == "down":
                     if [maxi[0] + 1, maxi[1]] in misses or [maxi[0] + 1, maxi[1]] in sinks or [maxi[0] + 1, maxi[1]] in hits:
-                        contanction.append("down")
+                        contaction.append("down")
                         continue
                     return [maxi[0] + 1, maxi[1]]
                 if direction == "up":

@@ -15,7 +15,7 @@ class bot1:
                 coords = getcoordinatesofship(x, y, direction, ship['size'])
                 value = checkcoordinates(coords, ships)
                 if value == True:
-                  ship['coordinates'].append(coords)
+                    ship['coordinates']=coords
 
         return ships
 
@@ -32,11 +32,11 @@ class bot1:
             
             return [x,y]
 
-        return getNextHit()
+        return getNextHit(hits, misses, sinks)
 
 
 def getNextHit(hits, misses, sinks):
-    hitsLen = hits.length
+    hitsLen = len(hits)
     
     # vertical
     if (hitsLen > 1) and (hits[0][0] == hits[1][0]):
@@ -79,44 +79,64 @@ def getNextHit(hits, misses, sinks):
 
 
 def checkcoordinatesIn(misses, sinks, coord):
-    if set(coord).issubset(set(misses)) or set(coord).issubset(set(sinks)):
-            return False
+    if inList(coord, misses) or inList(coord,sinks):
+        return False
 
     return True
 
 
 def checkcoordinates(coords, ships):
     for ship in ships:
-        if set(coords).issubset(set(ship['coordinates'])):
+        if 'coordinates' in ship and isSubset(coords, ship['coordinates']):
             return False
 
     return True
 
+def inList(coord, coordinates):
+
+    if coordinates == []:
+        return False
+
+    for coordinate in coordinates:
+        if coord[0] == coordinate[0] and coord[1] == coordinate[1]:
+            return True
+    return False
+
+def isSubset(coords, coordinates):
+    if coordinates == []:
+        return False
+    for coord in coords:
+        for coordinate in coordinates:
+            if coord[0] == coordinate[0] and coord[1] == coordinate[1]:
+                return True
+    return False
+
 def getcoordinatesofship(x, y, dir, size):
-    coords = [x,y]
+
+    coords = [[x,y]]
     if dir == 0: #west
-        while size > 0:
+        while size > 1:
             x = x - 1
             size = size - 1
             coords.append([x, y])
         return coords
 
     if dir == 1: #south
-        while size > 0:
+        while size > 1:
             y = y + 1
             size = size - 1
             coords.append([x, y])
         return coords
 
     if dir == 2: #east
-        while size > 0:
+        while size > 1:
             x = x + 1
             size = size - 1
             coords.append([x, y])
         return coords
 
     if dir == 3: #north
-        while size > 0:
+        while size > 1:
             y = y - 1
             size = size - 1
             coords.append([x, y])
@@ -126,6 +146,8 @@ def getcoordinatesofship(x, y, dir, size):
 def getrandomcoordinates():
     x = random.randint(0, 9)
     y = random.randint(0, 9)
+
+    print("random coord: ", x, y)
     return x,y
 
 def getrandomdirection(x, y, size):
@@ -150,6 +172,9 @@ def getrandomdirection(x, y, size):
     if x + size > 9:
         direction = random.randint(0, 1)
         return direction
-    if y + size < 9:
+    if y + size > 9:
         direction = random.randint(2, 3)
         return direction
+    return random.randint(0,3)
+
+
