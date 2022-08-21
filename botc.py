@@ -1,8 +1,9 @@
 import random
+
 class bot1:
     def __init__(self):
         pass
-       
+
     def anylize(self, cords):
         return {"left": cords[1], "right": 9 - (cords[1]), "up": cords[0], "down": 9 - (cords[0])}
 
@@ -168,4 +169,3 @@ class bot1:
                 return coordinate
             else:
                 continue
-

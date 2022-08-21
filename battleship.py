@@ -4,7 +4,7 @@ import botc
 # import bot2
 import bots
 
-GAMES = 10000
+GAMES = 1
 
 def main():
     wins = [
@@ -18,11 +18,11 @@ def main():
         }
     ]
     games = 1
-    while True:
+    while games <= GAMES:
         players = initPlayers()
         placeShips(players)
-        # printShips(players[0])
-        # printShips(players[1])
+        printShips(players[0])
+        printShips(players[1])
 
         # Randomize who goes first
         player = nextPlayer(random.choice([0, 1]))
@@ -34,8 +34,6 @@ def main():
             player = nextPlayer(player[0])
 
         games += 1
-        if games > GAMES:
-            break
 
     print(wins[0]['name'], wins[0]['wins'])
     print(wins[1]['name'], wins[1]['wins'])
@@ -92,10 +90,13 @@ def makeMove(player, opponent):
         print('ERROR: invalid y coordinate in guess: ', coordinate)
         sys.exit(1)
     if coordinate in player['misses']:
+        print(player['name'], coordinate, ' duplicate miss')
         return False
     if coordinate in player['hits']:
+        print(player['name'], coordinate, ' duplicate hit')
         return False
     if coordinate in player['sinks']:
+        print(player['name'], coordinate, ' duplicate sunk')
         return False
 
     # Go through all opponent ships
@@ -108,9 +109,11 @@ def makeMove(player, opponent):
             hit = True
             ship['hits'] += 1
             player['hits'].append(coordinate)
+            print(player['name'], coordinate, ' hit')
 
             # Did the guess sink the ship?
             if ship['hits'] == ship['size']:
+                print(player['name'], coordinate, ' sunk', ship['size'])
                 for coordinate in ship['coordinates']:
                     player['hits'].remove(coordinate)
                     player['sinks'].append(coordinate)
@@ -119,6 +122,7 @@ def makeMove(player, opponent):
                     return True
 
     if not hit:
+        print(player['name'], coordinate, ' miss')
         player['misses'].append(coordinate)
 
     return False
@@ -126,15 +130,16 @@ def makeMove(player, opponent):
 
 def printShips(player):
     print("   ", end="")
-    for column in [ "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" ]:
+    # for column in [ "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" ]:
+    for column in [ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ]:
         print(column, end=" ")
     print()
 
     for y in range(0, 10):
-        if y < 9:
-            print("", y + 1, end=" ")
-        else:
-            print(y + 1, end=" ")
+        # if y < 9:
+        print("", y, end=" ")
+        # else:
+        #     print(y, end=" ")
         for x in range(0, 10):
             shipFound = False
             for ship in player['ships']:
