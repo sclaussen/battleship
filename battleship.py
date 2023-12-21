@@ -1,15 +1,17 @@
 import sys
 import random
-import botc
-# import bot2
+import traceback
+
+# import botc
+import botz
 import bots
 
-GAMES = 1
+GAMES = 500
 
 def main():
     wins = [
         {
-            'name': 'caden',
+            'name': 'zeenat',
             'wins': 0
         },
         {
@@ -156,8 +158,8 @@ def printShips(player):
 def initPlayers():
     return [
         {
-            'name': 'caden',
-            'bot': botc.bot1(),
+            'name': 'zeenat',
+            'bot': botz.bot1(),
             'sunkShips': 0,
             'ships': [
                 {

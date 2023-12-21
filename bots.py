@@ -96,15 +96,21 @@ class bots:
         if len(options) > 0:
             return random.choice(options)
 
-        options = self.verticalLineWithOptions(hits, misses, sinks)
-        if len(options) > 0:
-            return random.choice(options)
+        # options = self.verticalLineWithOptions(hits, misses, sinks)
+        # if len(options) > 0:
+        #     return random.choice(options)
 
         options = self.getMultipleHitOptions(hits, misses, sinks)
         return random.choice(options)
 
 
     def horizontalLineWithOptions(self, hits, misses, sinks):
+
+        # Create a key/value pair where:
+        # - the key is each x value that has atleast one hit
+        # - the value is the number of hits on that x line
+        # By doing this we are able to determine whether there's a
+        # line on the line x (eg the value would be > 1)
         # print(hits)
         horizontalLines = {}
         for hit in hits:
@@ -112,27 +118,33 @@ class bots:
                 horizontalLines[hit[0]] = 1
             else:
                 horizontalLines[hit[0]] += 1
-        # print(horizontalLines)
+        print(horizontalLines)
 
+
+        # Determine the x value that contains the maximum number of hits
         xValue = -1
-        maxPoints = 0
+        maxLineLength = 0
         for x in horizontalLines.keys():
-            if horizontalLines[x] > 1 and horizontalLines[x] > maxPoints:
-                maxPoints = horizontalLines[x]
+            if horizontalLines[x] > 1 and horizontalLines[x] > maxLineLength:
+                maxLineLength = horizontalLines[x]
                 xValue = x
 
         if xValue == -1:
             return []
 
-        # print('xValue', xValue)
+
+        # Determine the y value for the space prior to the beginning
+        # of the line and the y value for the space at the end of the
+        # line.
+        print('xValue', xValue)
         minY = 10
         maxY = -1
         for hit in hits:
             if hit[0] == xValue:
                 # print(hit)
-                if hit[1] - 1 < minY:
+                if hit[1] - 1 > -1 and hit[1] - 1 < minY:
                     minY = hit[1] - 1
-                if hit[1] + 1 > maxY:
+                if hit[1] + 1 < 10 and hit[1] + 1 > maxY:
                     maxY = hit[1] + 1
 
         options = []
@@ -141,8 +153,7 @@ class bots:
         if maxY > -1 and minY < 10 and [ xValue, maxY ] not in misses and [ xValue, maxY ] not in sinks:
             options.append([ xValue, maxY ])
 
-        # print(options)
-
+        print(options)
         return options
 
 
@@ -154,13 +165,12 @@ class bots:
                 verticalLines[hit[1]] = 1
             else:
                 verticalLines[hit[1]] += 1
-        # print(verticalLines)
 
         yValue = -1
-        maxPoints = 0
+        maxLineLength = 0
         for y in verticalLines.keys():
-            if verticalLines[y] > 1 and verticalLines[y] > maxPoints:
-                maxPoints = verticalLines[y]
+            if verticalLines[y] > 1 and verticalLines[y] > maxLineLength:
+                maxLineLength = verticalLines[y]
                 yValue = y
 
         if yValue == -1:
